@@ -1,39 +1,39 @@
-
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
+from pydantic import AnyHttpUrl, field_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: Union[str, List[AnyHttpUrl]] = []
 
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
-        if isinstance(v, str) and not v.startswith("["):
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
+    def assemble_cors_origins(cls, v):
+        if isinstance(v, str):
+            # Remover espacios y dividir por comas
             return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
+        elif isinstance(v, list):
             return v
-        raise ValueError(v)
+        else:
+            raise ValueError("Invalid value for BACKEND_CORS_ORIGINS")
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
-    DATABASE_URI: Optional[PostgresDsn] = None
+    DATABASE_URI: Optional[str] = None
 
-    @validator("DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+    @field_validator("DATABASE_URI", mode="before")
+    def assemble_db_connection(cls, v, info):
         if isinstance(v, str):
             return v
-        return PostgresDsn.build(
-            scheme="postgresql",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_SERVER"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
-        )
-    
+        data = info.data
+        user = data["POSTGRES_USER"]
+        password = data["POSTGRES_PASSWORD"]
+        server = data["POSTGRES_SERVER"]
+        db = data["POSTGRES_DB"]
+        return f"postgresql://{user}:{password}@{server}/{db}"
 
     class Config:
         case_sensitive = True
