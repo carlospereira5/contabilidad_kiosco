@@ -10,7 +10,9 @@ services:
     depends_on:
       - database  # Asegurar que la base de datos esté lista antes de iniciar
     volumes:
-      - ./app:/app  # Montar el código de la aplicación (opcional)
+      - ./app:/app  # Montar el código de la aplicación
+      - ./alembic:/app/alembic  # Compartir la carpeta alembic
+      - ./alembic.ini:/app/alembic.ini  # Compartir el archivo alembic.ini
     networks:
       - app_network
 

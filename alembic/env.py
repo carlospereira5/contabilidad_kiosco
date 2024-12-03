@@ -10,6 +10,7 @@ from alembic import context
 from app.core.config import settings
 from app.database import Base
 
+
 # Obtener la configuración de Alembic
 config = context.config
 

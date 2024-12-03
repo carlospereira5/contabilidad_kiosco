@@ -1,0 +1,53 @@
+# Byte-compiled Python files
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Virtual environments
+venv/
+
+# Local development artifacts
+.project_structure.txt
+*.log
+
+# Test data and outputs
+tests/__pycache__/
+tests/**/*.pyc
+
+# Version control metadata
+.git/
+.gitignore
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.orig
+
+# IDE files
+.vscode/
+.idea/
+
+# Exclude environment files used locally
+.env.local
+
+# Build and cache directories
+alembic/versions/__pycache__/
+alembic/env.pyc
+build/
+dist/
+
+# Node.js files if present
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Avoid including test coverage data
+.coverage
+*.cover
+
+# Docker artifacts
+Dockerfile~
